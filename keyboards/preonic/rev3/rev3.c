@@ -15,6 +15,24 @@
  */
 #include "rev3.h"
 
+led_config_t g_led_config = {{
+  { NO_LED,      3, NO_LED,      4, NO_LED, NO_LED },
+  { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  { NO_LED, NO_LED,      5, NO_LED,      6, NO_LED },
+  { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  {      0, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  { NO_LED, NO_LED, NO_LED, NO_LED, NO_LED, NO_LED },
+  { NO_LED,      2, NO_LED, NO_LED,      7, NO_LED },
+  { NO_LED, NO_LED,      8,      1, NO_LED, NO_LED }
+}, {
+  { 112, 39 }, { 148, 60 }, { 206, 53 }, { 206, 3 }, { 150, 3 }, { 74,  3 }, { 18,  3 }, { 18,  54 }, { 77,  60 }
+}, {
+  2, 2, 2, 2, 2, 2, 2, 2, 2
+}
+};
+
 void matrix_init_kb(void) {
 	matrix_init_user();
 }

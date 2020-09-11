@@ -17,6 +17,7 @@
 #include QMK_KEYBOARD_H
 #include "muse.h"
 #include "raw_hid.h"
+#include "aurora.h"
 
 #define RL(x) RALT(x)
 
@@ -337,7 +338,7 @@ bool music_mask_user(uint16_t keycode) {
 }
 
 
-/*
+
 uint8_t led_config[] = 
 	{ 0x15, 
 	  0x06, 0xff, 0x05, 0xff, 0x04, 0xff, 0x03,
@@ -371,6 +372,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 					if (led_idx == 0x00) {
 						continue;
 					}
+					
+					aurora_colors[led_idx].r = r;
+					aurora_colors[led_idx].g = g;
+					aurora_colors[led_idx].b = b;
 
 					//rgb_matrix_set_color(led_idx, r, g, b);
 					//setrgb(r, g, b, (LED_TYPE *)&led[led_idx]);
@@ -383,4 +388,4 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 			raw_hid_send(data, length);
 			break;
 	}
-}*/
+}

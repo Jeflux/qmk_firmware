@@ -1,7 +1,12 @@
+//#include "aurora.h"
+
 RGB_MATRIX_EFFECT(RGB_MATRIX_CHRISTMAS)
 RGB_MATRIX_EFFECT(RGB_MATRIX_MIAMI)
+RGB_MATRIX_EFFECT(RGB_MATRIX_AURORA)
 
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
+
+extern RGB aurora_colors[9];
 
 //---------------------------------------------------
 // Helper functions
@@ -15,6 +20,7 @@ uint8_t lerp(uint8_t a, uint8_t b, double t) {
 
 HSV rgb_to_hsv(RGB rgb)
 {
+
   HSV hsv;
   uint8_t rgbMin, rgbMax;
 
@@ -37,15 +43,27 @@ HSV rgb_to_hsv(RGB rgb)
   }
 
   if (rgbMax == rgb.r)
-  hsv.h = 0 + 43 * (rgb.g - rgb.b) / (rgbMax - rgbMin);
+	hsv.h = 0 + 43 * (rgb.g - rgb.b) / (rgbMax - rgbMin);
   else if (rgbMax == rgb.g)
-  hsv.h = 85 + 43 * (rgb.b - rgb.r) / (rgbMax - rgbMin);
+	hsv.h = 85 + 43 * (rgb.b - rgb.r) / (rgbMax - rgbMin);
   else
-  hsv.h = 171 + 43 * (rgb.r - rgb.g) / (rgbMax - rgbMin);
+	hsv.h = 171 + 43 * (rgb.r - rgb.g) / (rgbMax - rgbMin);
 
   return hsv;
 }
 //---------------------------------------------------
+
+static HSV RGB_MATRIX_AURORA_math(HSV hsv, uint8_t i, uint8_t time) {
+	RGB rgb = {
+		.r = aurora_colors[i].r,
+		.g = aurora_colors[i].g,
+		.b = aurora_colors[i].b
+	};
+	hsv = rgb_to_hsv(rgb);
+	return hsv;
+}
+
+bool RGB_MATRIX_AURORA(effect_params_t* params) { return effect_runner_i(params, &RGB_MATRIX_AURORA_math); }
 
 
 static HSV RGB_MATRIX_CHRISTMAS_math(HSV hsv, uint8_t i, uint8_t time) {
@@ -73,7 +91,7 @@ const RGB miami_colors[5] = {
 };
 
 bool RGB_MATRIX_MIAMI(effect_params_t* params) {
-  double lerpVal = (sin(g_rgb_counters.tick * 3.141592 / 1600) * 0.5) + 0.5;
+  double lerpVal = (sin(g_rgb_timer * 3.141592 / 1600) * 0.5) + 0.5;
 
   // Top
   RGB t_rgb = {
