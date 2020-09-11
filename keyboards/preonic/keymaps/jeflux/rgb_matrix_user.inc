@@ -60,6 +60,8 @@ static HSV RGB_MATRIX_AURORA_math(HSV hsv, uint8_t i, uint8_t time) {
 		.b = aurora_colors[i].b
 	};
 	hsv = rgb_to_hsv(rgb);
+	hsv.s = (uint8_t) (hsv.s * (rgb_matrix_config.hsv.s / (float) 0xff));
+	hsv.v = (uint8_t) (hsv.v * (rgb_matrix_config.hsv.v / (float) 0xff));
 	return hsv;
 }
 
