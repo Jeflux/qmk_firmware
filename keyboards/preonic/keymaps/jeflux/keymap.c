@@ -158,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	  _______, KC_P1  , KC_P2  , KC_P3  , KC_PENT, RGB_M_SW,RGB_M_SN,RGB_RMOD, RGB_MOD, _______, _______, KC_PAUS, \
 	  _______, KC_P0  , KC_PDOT, _______, _______, _______, _______, _______, _______, _______, _______, KC_PSCR  \
 	),
-	
+
 	/* Adjust (Lower + Raise)
 	 * ,-----------------------------------------------------------------------------------.
 	 * |      |      |      |      |      |      |      |      |      |      |      |      |
@@ -339,8 +339,8 @@ bool music_mask_user(uint16_t keycode) {
 
 
 
-uint8_t led_config[] = 
-	{ 0x15, 
+uint8_t led_config[] =
+	{ 0x15,
 	  0x06, 0xff, 0x05, 0xff, 0x04, 0xff, 0x03,
 	  0xff, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff,
 	  0x07, 0xff, 0x08, 0xff, 0x01, 0xff, 0x02 };
@@ -359,7 +359,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 				for (uint8_t i = 0; i <= count; i++) {
 					//uint8_t ii = i * 4;
 
-					uint8_t led_idx = leds[0];
+					uint8_t led_idx = leds[0] - 1;
 					leds++;
 					uint8_t r = leds[0];
 					leds++;
@@ -369,10 +369,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 					leds++;
 
 					// Disabled for now
-					if (led_idx == 0x00) {
-						continue;
-					}
-					
+					//if (led_idx == 0x00) {
+					//	continue;
+					//}
+
 					aurora_colors[led_idx].r = r;
 					aurora_colors[led_idx].g = g;
 					aurora_colors[led_idx].b = b;

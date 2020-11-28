@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define ENCODERS_PAD_A { B1 }
 #define ENCODERS_PAD_B { B3 }
+#define ENCODER_DIRECTION_FLIP
 
 //#define QMK_ESC_OUTPUT F1
 //#define QMK_ESC_INPUT B5

@@ -6,14 +6,14 @@ enum layers {
   _DEFAULT,
   _NUMRAISE,
   _MEDIA,
+  _FUNCTION,
 
   _ADJUST
 };
 
 enum keycodes {
   DEFAULT = SAFE_RANGE,
-  LAYER_NEXT,
-  LOGO_TOGGLE
+  LAYER_NEXT
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -37,29 +37,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_MEDIA] = LAYOUT_grid( \
   KC_MPRV, KC_MPLY,   KC_MNXT,
   _______, KC_MSTP,   _______,
-  KC_WBAK, KC_WFWD,   KC_WREF, _______,
+  KC_WBAK, KC_WREF,   KC_WFWD, _______,
   _______, _______,   _______,
   KC_PSCR, KC_PAUSE,  _______
 ),
 
+[_FUNCTION] = LAYOUT_grid(\
+  KC_F10,   KC_F11,   KC_F12,
+  KC_F7,    KC_F8,    KC_F9,
+  KC_F4,    KC_F5,    KC_F6,   _______,
+  KC_F1,    KC_F2,    KC_F3,
+  _______,  _______,  _______
+),
+
 [_ADJUST] = LAYOUT_grid(\
-  LAYER_NEXT,     _______, _______,
-  _______,        _______, _______,
-  _______,        _______, _______, _______,
-  _______,        _______, _______,
-  LOGO_TOGGLE,    _______, RESET
+  LAYER_NEXT, _______, _______,
+  _______,    _______, _______,
+  _______,    _______, _______, _______,
+  _______,    _______, _______,
+  _______,    _______, RESET
 )
 
 };
 
-bool showLogo = false;
+static uint16_t idleTime;
+static bool idle = false;
 
 void keyboard_post_init_user(void) {
     oled_init(OLED_ROTATION_90);
     oled_clear();
 }
 
+void matrix_scan_user(void) {
+    if (!idle && timer_elapsed(idleTime) > OLED_TIMEOUT) {
+        idle = true;
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        idleTime = timer_read();
+        idle = false;
+    }
+
     switch (keycode) {
         case DEFAULT:
             if (record->event.pressed) {
@@ -69,22 +89,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case LAYER_NEXT:
             if (record->event.pressed) {
-                showLogo = false;
                 switch (biton32(default_layer_state)) {
-                    case _MEDIA:
-                        set_single_persistent_default_layer(_DEFAULT);
-                        break;
                     case _DEFAULT:
                         set_single_persistent_default_layer(_MEDIA);
                         break;
+                    case _MEDIA:
+                        set_single_persistent_default_layer(_FUNCTION);
+                        break;
+                    case _FUNCTION:
+                        set_single_persistent_default_layer(_DEFAULT);
+                        break;
                 }
-            }
-            return false;
-            break;
-        case LOGO_TOGGLE:
-            if (record->event.pressed) {
-                oled_clear();
-                showLogo = !showLogo;
             }
             return false;
             break;
@@ -94,7 +109,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void encoder_update_user(uint8_t index, bool clockwise) {
-    oled_on();
+    idleTime = timer_read();
+    idle = false;
+
     switch (biton32(default_layer_state)) {
         case _MEDIA:
         case _DEFAULT:
@@ -114,15 +131,6 @@ void encoder_update_user(uint8_t index, bool clockwise) {
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_90;
 }
-
-//static void add_bitmap_to_buf(char* buf, const char* bitmap)
-//{
-//    int bitmapSize = sizeof(bitmap) / sizeof(char);
-//    for (int i = MIN(bitmapSize, oled_buf_size); i-- > 0;) {
-//        buf[i] = buf[i] | bitmap[i];
-//    }
-//}
-
 
 void render_char(const char c, const char* out, int x, int y)
 {
@@ -149,16 +157,31 @@ void render_string_P(const char *data, const char* out, int x, int y) {
     }
 }
 
+static int currentFrame = 0;
+static uint16_t frameTimer;
+
 void oled_task_user(void) {
     oled_set_cursor(0, 0);
+
+    if (idle) {
+        oled_off();
+        return;
+    }
 
     led_t led_state = host_keyboard_led_state();
 
     char bitmap[512];
     memset((void*) bitmap, 0x00, 512);
 
-    for (int i = sizeof(bitmap_bg); i-- > 0;) {
-        bitmap[i] |= pgm_read_byte_near(bitmap_bg + i);
+    if (timer_elapsed(frameTimer) > 150) {
+        frameTimer = timer_read();
+        currentFrame++;
+        currentFrame %= 4;
+    }
+
+    // Background
+    for (int i = 512; i-- > 0;) {
+        bitmap[i] |= pgm_read_byte_near(bitmap_bg + i + (currentFrame * 512));
     }
 
     if (led_state.num_lock) {
@@ -183,24 +206,21 @@ void oled_task_user(void) {
         case _DEFAULT:
             render_string_P(PSTR(">Def"), bitmap, 0, y++);
             render_string_P(PSTR(" Mus"), bitmap, 0, y++);
+            render_string_P(PSTR(" Fun"), bitmap, 0, y++);
             break;
         case _MEDIA:
             render_string_P(PSTR(" Def"), bitmap, 0, y++);
             render_string_P(PSTR(">Mus"), bitmap, 0, y++);
+            render_string_P(PSTR(" Fun"), bitmap, 0, y++);
+            break;
+        case _FUNCTION:
+            render_string_P(PSTR(" Def"), bitmap, 0, y++);
+            render_string_P(PSTR(" Mus"), bitmap, 0, y++);
+            render_string_P(PSTR(">Fun"), bitmap, 0, y++);
             break;
         default:
             render_string_P(PSTR("Undef"), bitmap, 0, y++);
     }
 
     oled_write_raw(bitmap, sizeof(bitmap));
-
-    //oled_render();
-
-    // Host Keyboard LED Status
-
-    //oled_set_cursor(0, oled_max_lines() - 4);
-    //oled_write_P(led_state.num_lock ? PSTR("NUM\n") : PSTR("\n"), false);
-    //oled_write_P(led_state.caps_lock ? PSTR("CAP\n") : PSTR("\n"), false);
-    //oled_write_P(led_state.scroll_lock ? PSTR("SCR\n") : PSTR("\n"), false);
 }
-//#endif

@@ -3,6 +3,8 @@
 #ifdef AUDIO_ENABLE
 #endif
 
+#define OLED_TIMEOUT 30000
+
 //#define MUSIC_MASK (keycode != KC_NO)
 
 /*
