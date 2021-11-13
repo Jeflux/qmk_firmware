@@ -591,7 +591,7 @@ uint8_t EEPROM_WriteDataWord(uint16_t Address, uint16_t DataWord) {
 }
 
 uint8_t EEPROM_ReadDataByte(uint16_t Address) {
-    uint8_t DataByte = 0xFF;
+    uint8_t DataByte = 0x00;
 
     if (Address < FEE_DENSITY_BYTES) {
         DataByte = DataBuf[Address];

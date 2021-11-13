@@ -84,6 +84,13 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     } else {
       tap_code(KC_VOLD);
     }
-    return true;
 }
 #endif // ENCODER_ENABLE
+
+void suspend_power_down_user(void) {
+    rgb_matrix_set_suspend_state(true);
+}
+
+void suspend_wakeup_init_user(void) {
+    rgb_matrix_set_suspend_state(false);
+}

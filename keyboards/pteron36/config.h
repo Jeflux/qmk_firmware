@@ -165,3 +165,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //RGB Underglow
 #define RGB_DI_PIN B6
 #define RGBLED_NUM 10
+#define VIAL_KEYBOARD_UID {0xD6, 0x68, 0xF2, 0x55, 0x9B, 0x48, 0x07, 0x6E}
+#define VIAL_UNLOCK_COMBO_ROWS { 0, 4 }
+#define VIAL_UNLOCK_COMBO_COLS { 0, 0 }
