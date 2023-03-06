@@ -1,7 +1,25 @@
 {
-    "keyboard_name": "infinity88",
+    "keyboard_name": "Infinity 88",
+    "manufacturer": "Team.Mechlovin",
     "url": "",
     "maintainer": "mechlovin",
+    "usb": {
+        "vid": "0x4D4C",
+        "pid": "0x8802",
+        "device_version": "0.0.1"
+    },
+    "backlight": {
+        "pin": "B0",
+        "breathing": true
+    },
+    "indicators": {
+        "caps_lock": "A4",
+        "num_lock": "A3"
+    },
+    "processor": "STM32F303",
+    "bootloader": "stm32-dfu",
+    "board": "QMK_PROTON_C",
+    "community_layouts": ["tkl_f13_ansi", "tkl_f13_iso"],
     "layouts": {
         "LAYOUT_all": {
             "layout": [
@@ -99,7 +117,7 @@
                 {"label":"K5G (B5,D6)", "x":17.25, "y":5.25}
             ]
         },
-        "LAYOUT_tkl_ansi_f13": {
+        "LAYOUT_tkl_f13_ansi": {
             "layout": [
                 {"label":"K00 (B0,B6)", "x":0, "y":0},
                 {"label":"K01 (B0,F4)", "x":1.25, "y":0},
@@ -196,7 +214,7 @@
                 {"label":"K5G (B5,D6)", "x":17.25, "y":5.25}
             ]
         },
-        "LAYOUT_tkl_iso_f13": {
+        "LAYOUT_tkl_f13_iso": {
             "layout": [
                 {"label":"K00 (B0,B6)", "x":0, "y":0},
                 {"label":"K01 (B0,F4)", "x":1.25, "y":0},
