@@ -15,13 +15,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keymap.h"
+#include "keymap_common.h"
+#include "keymap_introspection.h"
 #include "report.h"
 #include "keycode.h"
 #include "action_layer.h"
 #include "action.h"
 #include "debug.h"
-#include "quantum.h"
+#include "keycode_config.h"
+#include "quantum_keycodes.h"
+
+#ifdef ENCODER_MAP_ENABLE
+#    include "encoder.h"
+#endif
 
 #ifdef BACKLIGHT_ENABLE
 #    include "backlight.h"
@@ -61,7 +67,7 @@ action_t action_for_keycode(uint16_t keycode) {
         case KC_SYSTEM_POWER ... KC_SYSTEM_WAKE:
             action.code = ACTION_USAGE_SYSTEM(KEYCODE2SYSTEM(keycode));
             break;
-        case KC_AUDIO_MUTE ... KC_ASSISTANT:
+        case KC_AUDIO_MUTE ... KC_LAUNCHPAD:
             action.code = ACTION_USAGE_CONSUMER(KEYCODE2CONSUMER(keycode));
             break;
 #endif
